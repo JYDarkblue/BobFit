@@ -43,7 +43,7 @@
                     </div>
                     <button onclick="toggleProfileSidebar()" title="프로필 설정 숨기기"
                             class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-2.5 py-1 rounded-lg text-xs transition duration-200 border border-slate-200">
-                        <<<
+                        &lt;&lt;&lt;
                     </button>
                 </div>
 
@@ -109,14 +109,14 @@
             <!-- [우측 메인] 날짜별 식단 입력 & 결과 & 그래프 & 히스토리 -->
             <main id="contentMain" class="lg:col-span-2 space-y-6">
                 
-                <!-- [수정됨] 사이드바 축소 시 식단 입력 영역 바로 위에 표시되는 프로필 열기 바 -->
+                <!-- 사이드바 축소 시 식단 입력 영역 바로 위에 표시되는 프로필 열기 바 -->
                 <div id="openProfileBar" class="hidden bg-white rounded-2xl shadow-sm px-5 py-3 border border-slate-200/60 flex items-center justify-between">
                     <div class="flex items-center gap-2 text-sm font-bold text-slate-700">
                         <span>👤</span> <span>개인 프로필 설정이 숨겨져 있습니다</span>
                     </div>
                     <button onclick="toggleProfileSidebar()" 
                             class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-3 py-1.5 rounded-xl text-xs transition duration-200 border border-emerald-200 flex items-center gap-1">
-                        <span>>>></span> 프로필 열기
+                        <span>&gt;&gt;&gt;</span> 프로필 열기
                     </button>
                 </div>
 
@@ -181,7 +181,7 @@
                 <!-- 로딩 상태 -->
                 <div id="loading" class="hidden bg-white rounded-2xl p-8 text-center space-y-3 border border-slate-200/60 shadow-sm">
                     <div class="inline-block animate-spin rounded-full h-9 w-9 border-4 border-emerald-500 border-t-transparent"></div>
-                    <p class="text-slate-600 text-sm font-medium">Gemini AI가 목표 달성을 위한 식단과 운동 루틴을 분석 중입니다...</p>
+                    <p class="text-slate-600 text-sm font-medium">Gemini AI가 강력한 키워드 강조가 적용된 맞춤 리포트를 생성 중입니다...</p>
                 </div>
 
                 <!-- AI 분석 결과 리포트 -->
@@ -215,15 +215,16 @@
                             <span class="text-xl">💡</span>
                             <h3 class="font-bold text-slate-800 text-base">하루 식단 영양 평가 & 피드백</h3>
                         </div>
-                        <p id="resDietFeedback" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line"></p>
+                        <div id="resDietFeedback" class="space-y-2"></div>
                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-sm p-6 border border-slate-200/60 space-y-3">
+                    <!-- 목표 체중 & 건강한 식습관을 위한 AI 추천 식단 카드 -->
+                    <div class="bg-white rounded-2xl shadow-sm p-6 border border-emerald-200/80 bg-emerald-50/20 space-y-3">
                         <div class="flex items-center gap-2 text-emerald-700">
                             <span class="text-xl">🥗</span>
-                            <h3 class="font-bold text-slate-800 text-base">목표 체중 달성을 위한 맞춤 권장 식단</h3>
+                            <h3 class="font-bold text-slate-800 text-base">목표 체중 & 건강한 식습관 추천 식단</h3>
                         </div>
-                        <p id="resRecommendedDiet" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line"></p>
+                        <div id="resRecommendedDiet" class="space-y-2"></div>
                     </div>
 
                     <div class="bg-white rounded-2xl shadow-sm p-6 border border-slate-200/60 space-y-3">
@@ -231,7 +232,7 @@
                             <span class="text-xl">🏃‍♂️</span>
                             <h3 class="font-bold text-slate-800 text-base">선호 운동 중심 맞춤 운동 루틴</h3>
                         </div>
-                        <p id="resExercise" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line"></p>
+                        <div id="resExercise" class="space-y-2"></div>
                     </div>
 
                 </div>
@@ -471,14 +472,88 @@
             }
         }
 
+        // [최종 완성 스마트 하이라이터] 텍스트가 파싱되기 전 원본 문자열에서 수치, 용량, 주요 식단을 직접 감지하여 하이라이트 배지 적용
+        function highlightKeywords(text) {
+            if (!text) return '';
+
+            // 1. 주요 수치, 용량, 세트, 시간 단위 강조 (예: 1,600~1,700kcal, 150g, 3세트, 25분, 2L 등)
+            let processed = text.replace(/(\d+(?:\.\d+)?(?:~\d+(?:\.\d+)?)?(?:kcal|kg|g|L|ml|회|세트|분|초|시간|L이상))/g, 
+                '<strong class="text-amber-900 font-extrabold bg-amber-100 px-1.5 py-0.5 rounded text-xs border border-amber-300 shadow-2xs">$1</strong>'
+            );
+
+            // 2. 주요 식품명 및 운동 항목 자동 강조
+            const keywords = [
+                '두유', '삶은 달걀', '달걀', '닭가슴살', '안심', '우둔살', '부채살', '스테이크', 
+                '현미밥', '잡곡밥', '고구마', '사과', '바나나', '아메리카노', '토스트', '채소', '샐러드',
+                '단백질', '탄수화물', '수분', '유산소', '근력', '스쿼트', '푸시업', '플랭크', '런지', '버피', '인터벌'
+            ];
+            
+            keywords.forEach(kw => {
+                // 이미 하이라이트된 태그 내부가 아닐 때만 안전하게 치환
+                const regex = new RegExp(`(?![^<]*>)(${kw})`, 'g');
+                processed = processed.replace(regex, '<strong class="text-emerald-800 font-bold bg-emerald-100/80 px-1.5 py-0.5 rounded border border-emerald-200">$1</strong>');
+            });
+
+            return processed;
+        }
+
+        function formatToBulletList(dataInput) {
+            if (!dataInput) return '<div class="text-xs text-slate-400 p-2">정보가 없습니다.</div>';
+
+            let items = [];
+
+            if (Array.isArray(dataInput)) {
+                items = dataInput.map(item => typeof item === 'object' ? `${item.title ? `[${item.title}] ` : ''}${item.detail || ''}` : String(item));
+            } else if (typeof dataInput === 'string') {
+                let text = dataInput.replace(/\\n/g, ' ').trim();
+                
+                // 번호나 기호 앞에서 줄바꿈 분리
+                let structuredText = text.replace(/([0-9]+\.|\b[0-9]+\)|\[[^\]]+\]|▪|•|^\s*-\s*)/g, '\n$1');
+                
+                let lines = structuredText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+                if (lines.length <= 1) {
+                    lines = text.split(/(?<=\.)\s+/).filter(l => l.trim().length > 0);
+                }
+
+                items = lines;
+            }
+
+            let html = '<div class="space-y-2.5 mt-1">';
+            items.forEach(line => {
+                // 1단계: 텍스트 내부의 수치와 핵심 키워드 하이라이트 먼저 실행
+                let highlightedText = highlightKeywords(line);
+
+                // 2단계: 줄 시작 부분의 소제목 번호(1., 2., - 등)를 깔끔한 배지 형태로 변환
+                let formattedText = highlightedText.replace(/^([0-9]+\.|\b[0-9]+\)|\[[^\]]+\]|▪|•|-)\s*([^:\n]+:?)/, 
+                    '<strong class="text-emerald-900 font-extrabold bg-emerald-100 px-2.5 py-1 rounded-lg mr-2 text-xs inline-block shadow-2xs border border-emerald-200">$1 $2</strong>'
+                );
+
+                const isSubItem = line.startsWith('-');
+                const indentClass = isSubItem ? 'ml-4 bg-slate-50/80 border-dashed border-emerald-200' : 'bg-white border-slate-200/90';
+
+                html += `
+                    <div class="${indentClass} p-3.5 rounded-xl border shadow-2xs text-sm text-slate-700 flex items-start gap-2.5 leading-relaxed transition hover:border-emerald-300">
+                        <span class="text-emerald-500 font-bold shrink-0 mt-0.5">•</span>
+                        <div class="flex-1">${formattedText}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            return html;
+        }
+
         function renderResultUI(dateStr, resultObj) {
             document.getElementById('resSelectedDate').innerText = dateStr + " 기록";
             document.getElementById('resProfileSummary').innerText = resultObj.profile_summary;
             document.getElementById('resFoodsSummary').innerText = resultObj.foods_summary;
             document.getElementById('resTotalCalories').innerText = resultObj.total_calories || "계산 불가";
-            document.getElementById('resDietFeedback').innerText = resultObj.diet_feedback;
-            document.getElementById('resRecommendedDiet').innerText = resultObj.recommended_diet || "정보 없음";
-            document.getElementById('resExercise').innerText = resultObj.exercise_recommendation;
+            
+            document.getElementById('resDietFeedback').innerHTML = formatToBulletList(resultObj.diet_feedback);
+            document.getElementById('resRecommendedDiet').innerHTML = formatToBulletList(resultObj.recommended_diet);
+            document.getElementById('resExercise').innerHTML = formatToBulletList(resultObj.exercise_recommendation);
+            
             document.getElementById('resultArea').classList.remove('hidden');
         }
 
@@ -656,37 +731,32 @@
             const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=" + apiKey;
 
             const promptText = `너는 전문 임상 영양사이자 헬스 트레이너야.
-사용자 신체 및 목표 정보:
-- 성별: ${gender}
-- 나이: ${age}세
-- 키: ${height} cm
-- 현재 몸무게: ${weight} kg
-- 목표 몸무게: ${targetWeight} kg
-- 선호 운동: ${preferredExercise}
+사용자 신체 스펙: ${age}세 ${gender}, 키 ${height}cm, 현재 체중 ${weight}kg, 목표 체중 ${targetWeight}kg, 선호 운동: ${preferredExercise}
+오늘 식단: 아침(${breakfast}), 점심(${lunch}), 저녁(${dinner}), 간식(${snack})
 
-기록 날짜: ${selectedDate}
-하루 식단 기록:
-- 아침: ${breakfast}
-- 점심: ${lunch}
-- 저녁: ${dinner}
-- 간식/음료: ${snack}
-
-위 정보(${age}세 ${gender}, 현재 체중 ${weight}kg에서 목표 체중 ${targetWeight}kg으로 도달하기 위한 칼로리 섭취 전략 및 선호 운동 반영)를 분석하여 반드시 아래 JSON 형식으로만 답변해줘. 
-마크다운 백틱(\`\`\`json 등)이나 설명 텍스트 없이 오직 순수 JSON 객체만 반환해.
-
-{
-  "profile_summary": "프로필 요약 (예: 35세 남성 | 175cm / 현재 70kg → 목표 65kg)",
-  "foods_summary": "끼니별 구성 요약 텍스트",
-  "total_calories": "하루 총 예상 섭취 칼로리 (예: 약 1,850 kcal)",
-  "diet_feedback": "현재 하루 전체 식단의 칼로리 및 탄/단/지 영양 균형에 대한 전문적인 평가",
-  "recommended_diet": "목표 몸무게(${targetWeight}kg) 달성을 위해 앞으로 추천하는 구체적인 권장 식단 및 식습관 가이드 (한국어로 자세히)",
-  "exercise_recommendation": "사용자가 선호하는 운동(${preferredExercise})을 적극 반영하여 오늘 상태에 맞게 구성한 맞춤 운동 루틴 및 강도 가이드 (한국어로 자세히)"
-}`;
+[지시 사항]
+1. 각 주요 답변(diet_feedback, recommended_diet, exercise_recommendation)은 1., 2., 3., 4. 와 같이 무조건 번호를 매겨 단락을 나누어라.
+2. 각 단락 내용 안에 **핵심 수치, 권장 용량, 음식명, 세트 수** 등을 포함하여 구체적으로 작성해라.`;
 
             const requestBody = {
                 contents: [{
                     parts: [{ text: promptText }]
-                }]
+                }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            profile_summary: { type: "STRING" },
+                            foods_summary: { type: "STRING" },
+                            total_calories: { type: "STRING" },
+                            diet_feedback: { type: "STRING" },
+                            recommended_diet: { type: "STRING" },
+                            exercise_recommendation: { type: "STRING" }
+                        },
+                        required: ["profile_summary", "foods_summary", "total_calories", "diet_feedback", "recommended_diet", "exercise_recommendation"]
+                    }
+                }
             };
 
             try {
@@ -703,17 +773,11 @@
                 }
 
                 if (!data.candidates || data.candidates.length === 0) {
-                    throw new Error("API로부터 응답 데이터를 받지 못했습니다.");
+                    throw new Error("AI로부터 응답 데이터를 받지 못했습니다.");
                 }
 
                 const aiText = data.candidates[0].content.parts[0].text;
-                const cleanJsonStr = aiText.replace(/```json/g, '').replace(/```/g, '').trim();
-                let resultObj;
-                try {
-                    resultObj = JSON.parse(cleanJsonStr);
-                } catch (e) {
-                    throw new Error("AI 응답을 JSON으로 변환하는 중 오류가 발생했습니다. 원본 응답: " + aiText);
-                }
+                let resultObj = JSON.parse(aiText);
 
                 const logs = getAllLogs();
                 logs[selectedDate] = {
