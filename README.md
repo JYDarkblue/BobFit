@@ -4,6 +4,14 @@
 
 ---
 
+## ✨ 바로가기 : https://jydarkblue.github.io/BobFit/
+
+---
+## 🛠️ ScreenShot
+<img width="874" height="783" alt="image" src="https://github.com/user-attachments/assets/92d70b5f-699f-45cc-9ecb-f6dc260d7ad7" />
+
+---
+
 ## 🌟 주요 특징
 
 1. **Gemini AI 연동**: 최신 Gemini Flash 모델을 활용하여 빠르고 정확한 일일 영양 평가, 칼로리 계산, 맞춤형 권장 식단 및 운동 가이드를 제공합니다.
